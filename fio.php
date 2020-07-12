@@ -33,7 +33,7 @@ class FioPlugin extends Plugin
 {
     const CACHE_PREFIX = 'ydfio';
 
-    const CACHE_TIMEOUT = 36000;
+    const CACHE_TIMEOUT = 74000;
 
     /** @var array */
     public $features = [
@@ -69,9 +69,12 @@ class FioPlugin extends Plugin
                 ['autoload', 100000],
                 ['setup', 99999],
                 ['setupFio', 20],
+            ],
+            'onPageInitialized' => [
                 ['accountsLoad', 10],
             ],
-            'onTwigInitialized' => ['onTwigInitialized', 0]
+            'onTwigInitialized' => ['onTwigInitialized', 0],
+            'onSchedulerInitialized' => ['onSchedulerInitialized',0]
         ];
     }
 
@@ -99,7 +102,7 @@ class FioPlugin extends Plugin
             return;
 
         foreach ($accountCfg as $cfg) {
-            $cache = $this->cache->fetch($this->getCacheKey($cfg['id']));
+            $cache = $this->cache->fetch(self::getCacheKey($cfg['id']));
 
             if ($cache) {
                 if ($cache instanceof Account)
@@ -108,7 +111,7 @@ class FioPlugin extends Plugin
                 $fio = $this->fio->createFioRead($cfg['id']);
 
                 $account = Account::create($fio, $cfg['id'], $cfg['title']);
-                $this->cache->save($this->getCacheKey($cfg['id']), $account, self::CACHE_TIMEOUT);//var_dump($cac);die;
+                $this->cache->save(self::getCacheKey($cfg['id']), $account, self::CACHE_TIMEOUT);
                 $this->collection->add($account);
             }
         }
@@ -125,6 +128,19 @@ class FioPlugin extends Plugin
         ];
     }
 
+    public function onSchedulerInitialized(Event $e)
+    {
+        if ($this->config->get('plugins.fio.scheduled_index.enabled')) {
+            $scheduler = $e['scheduler'];
+            $at = $this->config->get('plugins.fop.scheduled_index.at');
+            $logs = $this->config->get('plugins.fio.scheduled_index.logs');
+            $job = $scheduler->addFunction('Grav\Plugin\FioPlugin::indexJob', [], 'fio-index');
+            $job->at($at);
+            $job->output($logs);
+            $job->backlink('/plugins/fio');
+        }
+    }
+
     public function autoload()
     {
         return require_once __DIR__ . '/vendor/autoload.php';
@@ -134,8 +150,6 @@ class FioPlugin extends Plugin
     {
         $this->cache = $this->grav['cache'];
         $this->collection = new AccountsCollection();
-//        echo'<pre>';
-//        var_dump($this->grav['twig']);echo'</pre>';die;
     }
 
     public function getAccount($id)
@@ -143,9 +157,23 @@ class FioPlugin extends Plugin
         return $this->collection->get($id);
     }
 
-    protected function getCacheKey($id)
+    protected static function getCacheKey($id)
     {
         return self::CACHE_PREFIX . '_' . $id;
     }
 
+    public static function indexJob()
+    {
+        $grav =  Grav::instance();
+        $accountCfg = $grav['config']->get('plugins.fio.credentials');
+        if(empty($accountCfg) || !is_array($accountCfg))
+            return;
+
+        foreach ($accountCfg as $cfg) {
+            $fio = (new FioFactory(['account' => $cfg['account'], 'token' => $cfg['token']]))->createFioRead();
+
+            $account = Account::create($fio, $cfg['id'], $cfg['title']);
+            $grav['cache']->save(self::getCacheKey($cfg['id']), $account, self::CACHE_TIMEOUT);
+        }
+    }
 }
