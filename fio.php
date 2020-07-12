@@ -77,6 +77,9 @@ class FioPlugin extends Plugin
 
     public function setupFio()
     {
+        if(empty($accountCfg) || !is_array($accountCfg))
+            return;
+
         $accountCfg = $this->config->get('plugins.fio.credentials');
         $fioCfg = [];
         foreach ($accountCfg as $cfg) {
@@ -92,6 +95,8 @@ class FioPlugin extends Plugin
     public function accountsLoad()
     {
         $accountCfg = $this->config->get('plugins.fio.credentials');
+        if(empty($accountCfg) || !is_array($accountCfg))
+            return;
 
         foreach ($accountCfg as $cfg) {
             $cache = $this->cache->fetch($this->getCacheKey($cfg['id']));
