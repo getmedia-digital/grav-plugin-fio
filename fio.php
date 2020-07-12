@@ -77,10 +77,10 @@ class FioPlugin extends Plugin
 
     public function setupFio()
     {
+        $accountCfg = $this->config->get('plugins.fio.credentials');
         if(empty($accountCfg) || !is_array($accountCfg))
             return;
 
-        $accountCfg = $this->config->get('plugins.fio.credentials');
         $fioCfg = [];
         foreach ($accountCfg as $cfg) {
             $fioCfg[$cfg['id']] = [
