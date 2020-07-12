@@ -1,0 +1,26 @@
+{
+    "name": "getmedia/grav-plugin-fio",
+    "type": "grav-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pavel Janku",
+            "email": "pavel@getmedia.cz",
+            "role": "developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.3",
+        "ext-json": "*",
+        "ext-intl": "*",
+        "h4kuna/fio": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Grav\\Plugin\\YellDigital\\Fio\\": "src/"
+        },
+        "classmap": [
+            "fio.php"
+        ]
+    }
+}

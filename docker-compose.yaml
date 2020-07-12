@@ -1,0 +1,16 @@
+version: '3'
+services:
+  grav:
+    image: "getmedia/grav-cms"
+    container_name: grav_cms
+    env:
+      GRAV_VERSION: latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./:/var/www/html/user/plugins/fio:rw
+#      - /var/www/html/user/config:rw
+#      - /var/www/html/user/pages:rw
+#      - /var/www/html/user/data:rw
+#      - /var/www/html/user/accounts:rw
+#      - /var/www/html/user/themes:rw

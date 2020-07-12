@@ -1,0 +1,66 @@
+name: Fio Bank API Connector
+slug: fio
+type: plugin
+version: 1.0.0
+testing: false
+description: Provides bank account info for Fio bank accounts.
+icon: money
+author:
+  name: GET Media Digital
+  email: support@getmedia.digital
+  url: https://getmedia.digital
+keywords: plugin, fio, bank
+homepage: https://github.com/getmedia-digital/grav-plugin-fio
+bugs: https://github.com/getmedia-digital/grav-plugin-fio/issues
+license: MIT
+
+dependencies:
+  - { name: grav, version: '>=1.6.0' }
+
+form:
+  fields:
+    enabled:
+      type: toggle
+      label: PLUGIN_ADMIN.PLUGIN_STATUS
+      highlight: 1
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool
+    credentials:
+      type: section
+      title: Fio Accounts
+      fields:
+        credentials:
+          type: list
+          label: Accounts
+          fields:
+            .id:
+              type: text
+              label: Identifier
+              size: small
+              validate:
+                required: true
+                pattern: "^([0-9 a-z]*)$"
+            .title:
+              type: text
+              label: Title
+            credentials_fs:
+              type: fieldset
+              title: Credentials
+              fields:
+                .account:
+                  type: text
+                  label: Account number
+                  size: medium
+                  validate:
+                    required: true
+                    pattern: "^([0-9]{3,10})$"
+                .token:
+                  type: text
+                  label: Access token
+                  validate:
+                    required: true
+                    pattern: "^([0-9 a-z A-Z]*)$"
