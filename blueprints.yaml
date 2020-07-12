@@ -64,3 +64,25 @@ form:
                   validate:
                     required: true
                     pattern: "^([0-9 a-z A-Z]*)$"
+    scheduled_index:
+      type: fieldset
+      title: Scheduled indexing
+      fields:
+        scheduled_index.enabled:
+          type: toggle
+          label: Enable
+          highlight: 1
+          default: 0
+          options:
+            1: Enabled
+            0: Disabled
+          validate:
+            type: bool
+        scheduled_index.at:
+          type: cron
+          title: Run at
+          default: * 0 * * *
+        scheduled_index.logs:
+          type: text
+          title: Logs
+          optionable: true
