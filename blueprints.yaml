@@ -81,7 +81,7 @@ form:
         scheduled_index.at:
           type: cron
           title: Run at
-          default: * 0 * * *
+          default: "* 0 * * *"
         scheduled_index.logs:
           type: text
           title: Logs
