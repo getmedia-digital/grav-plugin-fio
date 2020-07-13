@@ -132,7 +132,7 @@ class FioPlugin extends Plugin
     {
         if ($this->config->get('plugins.fio.scheduled_index.enabled')) {
             $scheduler = $e['scheduler'];
-            $at = $this->config->get('plugins.fop.scheduled_index.at');
+            $at = $this->config->get('plugins.fio.scheduled_index.at');
             $logs = $this->config->get('plugins.fio.scheduled_index.logs');
             $job = $scheduler->addFunction('Grav\Plugin\FioPlugin::indexJob', [], 'fio-index');
             $job->at($at);
